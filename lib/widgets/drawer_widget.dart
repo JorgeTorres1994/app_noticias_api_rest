@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/theme_provider.dart';
@@ -16,6 +19,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+ 
     return Drawer(
       child: Material(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -34,35 +38,48 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                   ),
                   const VerticalSpacing(20),
-                  const Flexible(child: Text('Aplicación de Noticias')),
+                  Flexible(
+                    child: Text(
+                      'News app',
+                      style: GoogleFonts.lobster(
+                          textStyle: const TextStyle(
+                              fontSize: 20, letterSpacing: 0.6)),
+                    ),
+                  ),
                 ],
               ),
             ),
             const VerticalSpacing(20),
-            listTiles(label: "Inicio", icon: IconlyBold.home, fct: () {}),
-            listTiles(label: "Marcador", icon: IconlyBold.bookmark, fct: () {}),
-            const Divider(thickness: 5),
-            SwitchListTile(
-              title: Text(
-                themeProvider.getDarkTheme ? 'Oscuro' : 'Claro',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.color,
-                ),
-              ),
-              secondary: Icon(
-                themeProvider.getDarkTheme ? Icons.dark_mode : Icons.light_mode,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              value: themeProvider.getDarkTheme,
-              onChanged: (bool value) {
-                setState(() {
-                  themeProvider.setDarkTheme = value;
-                });
-              },
+            ListTilesWidget(
+              label: "Home",
+              icon: IconlyBold.home,
+              fct: () {},
             ),
+            ListTilesWidget(
+              label: "Bookmark",
+              icon: IconlyBold.bookmark,
+              fct: () {},
+            ),
+            const Divider(
+              thickness: 5,
+            ),
+            SwitchListTile(
+                title: Text(
+                  themeProvider.getDarkTheme ? 'Dark' : 'Light',
+                  style: const TextStyle(fontSize: 20),
+                ),
+                secondary: Icon(
+                  themeProvider.getDarkTheme
+                      ? Icons.dark_mode
+                      : Icons.light_mode,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                value: themeProvider.getDarkTheme,
+                onChanged: (bool value) {
+                  setState(() {
+                    themeProvider.setDarkTheme = value;
+                  });
+                }),
           ],
         ),
       ),
@@ -70,8 +87,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   }
 }
 
-class listTiles extends StatelessWidget {
-  const listTiles({
+class ListTilesWidget extends StatelessWidget {
+  const ListTilesWidget({
     Key? key,
     required this.label,
     required this.fct,
@@ -83,15 +100,13 @@ class listTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).colorScheme.secondary),
+      leading: Icon(
+        icon,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
       title: Text(
         label,
-        style: TextStyle(
-          fontSize: 20,
-          color: Theme.of(
-            context,
-          ).textTheme.bodyLarge?.color,
-        ),
+        style: const TextStyle(fontSize: 20),
       ),
       onTap: () {
         fct();
