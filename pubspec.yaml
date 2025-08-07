@@ -17,6 +17,10 @@ dependencies:
   provider: ^6.1.5
   shared_preferences: ^2.5.3
   google_fonts: ^6.3.0
+  fancy_shimmer_image: ^2.0.3
+  shimmer: ^3.0.0
+  card_swiper: ^3.0.1
+  page_transition: ^2.2.1
 
 dev_dependencies:
   flutter_test:
