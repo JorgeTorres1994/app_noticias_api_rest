@@ -1,7 +1,10 @@
 import 'package:app_news/consts/vars.dart';
 import 'package:app_news/inner_screens/search_screen.dart';
 import 'package:app_news/services/utils.dart';
+import 'package:app_news/widgets/articles_widget.dart';
 import 'package:app_news/widgets/drawer_widget.dart';
+import 'package:app_news/widgets/tabs.dart';
+import 'package:app_news/widgets/top_tending.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +12,6 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-
-import '../providers/theme_provider.dart';
-import '../widgets/articles_widget.dart';
-import '../widgets/loading_widget.dart';
-import '../widgets/tabs.dart';
-import '../widgets/top_tending.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

@@ -12,4 +12,14 @@ enum SortByEnum {
   publishedAt, // newest articles come first.
 }
 
-TextStyle smallTextStyle = GoogleFonts.montserrat(fontSize: 15);
+const List<String> searchKeywords = [
+  "Football",
+  "Flutter",
+  "Python",
+  "Weather",
+  "Crypto",
+  "Bitcoin",
+  "Youtube",
+  "Netflix",
+  "Meta"
+];

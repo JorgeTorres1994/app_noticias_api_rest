@@ -5,7 +5,6 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 class LoadingWidget extends StatefulWidget {
   const LoadingWidget({Key? key, required this.newsType}) : super(key: key);
   final NewsType newsType;

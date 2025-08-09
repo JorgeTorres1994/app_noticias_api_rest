@@ -1,9 +1,11 @@
-import 'package:app_news/consts/vars.dart';
+import 'package:app_news/consts/styles.dart';
+import 'package:app_news/inner_screens/blog_details.dart';
+import 'package:app_news/inner_screens/news_details_webview.dart';
 import 'package:app_news/services/utils.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
-
+import 'package:page_transition/page_transition.dart';
 
 class ArticlesWidget extends StatelessWidget {
   const ArticlesWidget({Key? key}) : super(key: key);
@@ -16,7 +18,10 @@ class ArticlesWidget extends StatelessWidget {
       child: Material(
         color: Theme.of(context).cardColor,
         child: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            // Navigate to the in app details screen
+            Navigator.pushNamed(context, NewsDetailsScreen.routeName);
+          },
           child: Stack(
             children: [
               Container(
@@ -45,6 +50,8 @@ class ArticlesWidget extends StatelessWidget {
                         height: size.height * 0.12,
                         width: size.height * 0.12,
                         boxFit: BoxFit.fill,
+                        errorWidget:
+                            Image.asset('assets/images/empty_image.png'),
                         imageUrl:
                             "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
                       ),
@@ -76,7 +83,16 @@ class ArticlesWidget extends StatelessWidget {
                             child: Row(
                               children: [
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.rightToLeft,
+                                          child: const NewsDetailsWebView(),
+                                          inheritTheme: true,
+                                          ctx: context),
+                                    );
+                                  },
                                   icon: const Icon(
                                     Icons.link,
                                     color: Colors.blue,
