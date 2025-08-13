@@ -1,10 +1,11 @@
-import 'package:app_news/consts/styles.dart';
-import 'package:app_news/services/utils.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../consts/styles.dart';
+import '../services/utils.dart';
 
 class NewsDetailsScreen extends StatefulWidget {
   static const routeName = "/NewsDetailsScreen";

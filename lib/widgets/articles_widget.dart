@@ -1,5 +1,3 @@
-import 'package:app_news/consts/styles.dart';
-import 'package:app_news/inner_screens/blog_details.dart';
 import 'package:app_news/inner_screens/news_details_webview.dart';
 import 'package:app_news/services/utils.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
@@ -7,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:page_transition/page_transition.dart';
 
-class ArticlesWidget extends StatelessWidget {
-  const ArticlesWidget({Key? key}) : super(key: key);
+import '../consts/styles.dart';
+import '../inner_screens/blog_details.dart';
 
+class ArticlesWidget extends StatelessWidget {
+  const ArticlesWidget({Key? key, required this.imageUrl, required this.title, required this.url, required this.dateToShow, required this.readingTime}) : super(key: key);
+  final String imageUrl, title, url, dateToShow, readingTime;
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
@@ -52,8 +53,7 @@ class ArticlesWidget extends StatelessWidget {
                         boxFit: BoxFit.fill,
                         errorWidget:
                             Image.asset('assets/images/empty_image.png'),
-                        imageUrl:
-                            "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
+                        imageUrl: imageUrl,
                       ),
                     ),
                     const SizedBox(
@@ -65,7 +65,7 @@ class ArticlesWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'title ' * 100,
+                           title,
                             textAlign: TextAlign.justify,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -75,7 +75,7 @@ class ArticlesWidget extends StatelessWidget {
                           Align(
                             alignment: Alignment.topRight,
                             child: Text(
-                              '🕒 Reading time',
+                              '🕒 $readingTime',
                               style: smallTextStyle,
                             ),
                           ),
@@ -88,7 +88,7 @@ class ArticlesWidget extends StatelessWidget {
                                       context,
                                       PageTransition(
                                           type: PageTransitionType.rightToLeft,
-                                          child: const NewsDetailsWebView(),
+                                          child:  NewsDetailsWebView(url: url),
                                           inheritTheme: true,
                                           ctx: context),
                                     );
@@ -99,7 +99,7 @@ class ArticlesWidget extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '20-2-2020 ' * 2,
+                                  dateToShow,
                                   maxLines: 1,
                                   style: smallTextStyle,
                                 ),

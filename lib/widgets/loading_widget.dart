@@ -1,9 +1,10 @@
-import 'package:app_news/consts/vars.dart';
 import 'package:app_news/services/utils.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+
+import '../consts/vars.dart';
 
 class LoadingWidget extends StatefulWidget {
   const LoadingWidget({Key? key, required this.newsType}) : super(key: key);

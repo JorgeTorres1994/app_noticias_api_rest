@@ -1,17 +1,21 @@
 import 'package:app_news/consts/vars.dart';
 import 'package:app_news/inner_screens/search_screen.dart';
 import 'package:app_news/services/utils.dart';
-import 'package:app_news/widgets/articles_widget.dart';
 import 'package:app_news/widgets/drawer_widget.dart';
-import 'package:app_news/widgets/tabs.dart';
-import 'package:app_news/widgets/top_tending.dart';
+import 'package:app_news/widgets/empty_screen.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
+
+import '../models/news_model.dart';
+import '../services/news_api.dart';
+import '../widgets/articles_widget.dart';
+import '../widgets/loading_widget.dart';
+import '../widgets/tabs.dart';
+import '../widgets/top_tending.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,6 +28,20 @@ class _HomeScreenState extends State<HomeScreen> {
   var newsType = NewsType.allNews;
   int currentPageIndex = 0;
   String sortBy = SortByEnum.publishedAt.name;
+
+  late Future<List<NewsModel>> _newsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _newsFuture = getNewsList();
+  }
+
+  Future<List<NewsModel>> getNewsList() async {
+    List<NewsModel> newsList = await NewsAPiServices.getAllNews();
+    return newsList;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
@@ -178,29 +196,64 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-            if (newsType == NewsType.allNews)
-              Expanded(
-                child: ListView.builder(
-                    itemCount: 20,
-                    itemBuilder: (ctx, index) {
-                      return const ArticlesWidget();
-                    }),
-              ),
-            if (newsType == NewsType.topTrending)
-              SizedBox(
-                height: size.height * 0.6,
-                child: Swiper(
-                  autoplayDelay: 8000,
-                  autoplay: true,
-                  itemWidth: size.width * 0.9,
-                  layout: SwiperLayout.STACK,
-                  viewportFraction: 0.9,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return TopTrendingWidget();
-                  },
-                ),
-              ),
+            FutureBuilder<List<NewsModel>>(
+                //future: getNewsList(),
+                future: _newsFuture,
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return newsType == NewsType.allNews
+                        ? LoadingWidget(newsType: newsType)
+                        : Expanded(
+                            child: LoadingWidget(newsType: newsType),
+                          );
+                  } else if (snapshot.hasError) {
+                    return Expanded(
+                      child: EmptyNewsWidget(
+                        //text: "an error occured ${snapshot.error}",
+                        text: "An error occurred:\n${snapshot.error.toString()}",
+                        imagePath: 'assets/images/no_news.png',
+                      ),
+                    );
+                  } else if (snapshot.data == null) {
+                    return const Expanded(
+                      child: EmptyNewsWidget(
+                        text: "No news found",
+                        imagePath: 'assets/images/no_news.png',
+                      ),
+                    );
+                  }
+                  return newsType == NewsType.allNews
+                      ? Expanded(
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (ctx, index) {
+                                return ArticlesWidget(
+                                  imageUrl: snapshot.data![index].urlToImage,
+                                  dateToShow: snapshot.data![index].dateToShow,
+                                  readingTime:
+                                      snapshot.data![index].readingTimeText,
+                                  title: snapshot.data![index].title,
+                                  url: snapshot.data![index].url,
+                                );
+                              }),
+                        )
+                      : SizedBox(
+                          height: size.height * 0.6,
+                          child: Swiper(
+                            autoplayDelay: 8000,
+                            autoplay: true,
+                            itemWidth: size.width * 0.9,
+                            layout: SwiperLayout.STACK,
+                            viewportFraction: 0.9,
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              return TopTrendingWidget(
+                                url: snapshot.data![index].url,
+                              );
+                            },
+                          ),
+                        );
+                })),
             //  LoadingWidget(newsType: newsType),
           ]),
         ),

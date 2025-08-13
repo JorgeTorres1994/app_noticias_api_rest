@@ -1,10 +1,11 @@
-import 'package:app_news/consts/vars.dart';
-import 'package:app_news/services/utils.dart';
-import 'package:app_news/widgets/empty_screen.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
+import '../consts/vars.dart';
+import '../services/utils.dart';
+import '../widgets/empty_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
