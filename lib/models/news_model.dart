@@ -1,7 +1,8 @@
 import 'package:app_news/services/global_methods.dart';
+import 'package:flutter/material.dart';
 import 'package:reading_time/reading_time.dart';
 
-class NewsModel {
+class NewsModel with ChangeNotifier {
   String newsId,
       sourceName,
       authorName,
@@ -32,13 +33,11 @@ class NewsModel {
     String title = json["title"] ?? "";
     String content = json["content"] ?? "";
     String description = json["description"] ?? "";
-    String dateToShow =  "";
 
-    if(json["publishedAt"] != null){
+    String dateToShow = "";
+    if (json["publishedAt"] != null) {
       dateToShow = GlobalMethods.formattedDateText(json["publishedAt"]);
-
     }
-
     return NewsModel(
       newsId: json["source"]["id"] ?? "",
       sourceName: json["source"]["name"] ?? "",
@@ -46,8 +45,7 @@ class NewsModel {
       title: title,
       description: description,
       url: json["url"] ?? "",
-      urlToImage:
-          json["urlToImage"] ??
+      urlToImage: json["urlToImage"] ??
           "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
       publishedAt: json["publishedAt"] ?? "",
       content: content,
@@ -59,18 +57,6 @@ class NewsModel {
   static List<NewsModel> newsFromSnapshot(List newSnapshot) {
     return newSnapshot.map((json) {
       return NewsModel.fromJson(json);
-    }).toList();
-  }
-
-  static List<NewsModel> removeDuplicates(List<NewsModel> newsList) {
-    final urls = <String>{};
-    return newsList.where((news) {
-      if (urls.contains(news.url)) {
-        return false;
-      } else {
-        urls.add(news.url);
-        return true;
-      }
     }).toList();
   }
 
@@ -90,9 +76,8 @@ class NewsModel {
     return data;
   }
 
-  //@override
-  //String toString() {
-    //return "news {newid: $newsId}";
-  //}
-
+  // @override
+  // String toString() {
+  //   return "news {newid: $newsId}";
+  // }
 }

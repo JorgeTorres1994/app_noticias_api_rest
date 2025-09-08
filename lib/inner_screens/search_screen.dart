@@ -1,11 +1,14 @@
+import 'package:app_news/consts/vars.dart';
+import 'package:app_news/models/news_model.dart';
+import 'package:app_news/providers/news_provider.dart';
+import 'package:app_news/services/utils.dart';
+import 'package:app_news/widgets/articles_widget.dart';
+import 'package:app_news/widgets/empty_screen.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
-import '../consts/vars.dart';
-import '../services/utils.dart';
-import '../widgets/empty_screen.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -24,6 +27,8 @@ class _SearchScreenState extends State<SearchScreen> {
     focusNode = FocusNode();
   }
 
+  List<NewsModel>? searchList = [];
+  bool isSearching = false;
   @override
   void dispose() {
     if (mounted) {
@@ -37,94 +42,134 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).getColor;
+    final newsProvider = Provider.of<NewsProvider>(context);
     return SafeArea(
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-            body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      focusNode.unfocus();
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(
-                      IconlyLight.arrowLeft2,
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        focusNode.unfocus();
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(IconlyLight.arrowLeft2),
                     ),
-                  ),
-                  Flexible(
+                    Flexible(
                       child: TextField(
-                    focusNode: focusNode,
-                    controller: _searchTextController,
-                    style: TextStyle(color: color),
-                    autofocus: true,
-                    textInputAction: TextInputAction.search,
-                    keyboardType: TextInputType.text,
-                    onEditingComplete: () {},
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(
-                        bottom: 8 / 5,
-                      ),
-                      hintText: "Search",
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      suffix: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: GestureDetector(
-                          onTap: () {
-                            _searchTextController.clear();
-                            focusNode.unfocus();
-                            setState(() {});
-                          },
-                          child: const Icon(
-                            Icons.close,
-                            size: 18,
-                            color: Colors.red,
+                        focusNode: focusNode,
+                        controller: _searchTextController,
+                        style: TextStyle(color: color),
+                        autofocus: true,
+                        textInputAction: TextInputAction.search,
+                        keyboardType: TextInputType.text,
+                        onEditingComplete: () async {
+                          searchList = await newsProvider.searchNewsProvider(
+                            query: _searchTextController.text,
+                          );
+                          isSearching = true;
+                          focusNode.unfocus();
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.only(bottom: 8 / 5),
+                          hintText: "Search",
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          suffix: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: GestureDetector(
+                              onTap: () {
+                                _searchTextController.clear();
+                                focusNode.unfocus();
+                                isSearching = false;
+                                // searchList =[];
+                                searchList!.clear();
+                                setState(() {});
+                              },
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ))
-                ],
-              ),
-            ),
-            const VerticalSpacing(10),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: MasonryGridView.count(
-                  itemCount: searchKeywords.length,
-                  crossAxisCount: 4,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      child: Container(
-                          margin: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: color),
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(searchKeywords[index]),
-                          )),
-                    );
-                  },
+                  ],
                 ),
               ),
-            ),
-            const EmptyNewsWidget(
-              text: "Ops! No resuls found",
-              imagePath: 'assets/images/search.png',
-            ),
-          ],
-        )),
+              const VerticalSpacing(10),
+              if (!isSearching && searchList!.isEmpty)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MasonryGridView.count(
+                      itemCount: searchKeywords.length,
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 4,
+                      crossAxisSpacing: 4,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () async {
+                            searchList = await newsProvider.searchNewsProvider(
+                              query: _searchTextController.text,
+                            );
+                            isSearching = true;
+                            focusNode.unfocus();
+                            _searchTextController.text = searchKeywords[index];
+                            setState(() {});
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: color),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: FittedBox(
+                                  child: Text(searchKeywords[index]),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              if (isSearching && searchList!.isEmpty)
+                const Expanded(
+                  child: EmptyNewsWidget(
+                    text: "Ops! No resuls found",
+                    imagePath: 'assets/images/search.png',
+                  ),
+                ),
+              if (searchList != null && searchList!.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: searchList!.length,
+                    itemBuilder: (ctx, index) {
+                      return ChangeNotifierProvider.value(
+                        value: searchList![index],
+                        child: const ArticlesWidget(),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,8 +1,12 @@
+import 'package:app_news/providers/news_provider.dart';
+import 'package:app_news/services/global_methods.dart';
 import 'package:app_news/widgets/vertical_spacing.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../consts/styles.dart';
 import '../services/utils.dart';
@@ -20,6 +24,10 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
   Widget build(BuildContext context) {
     final color = Utils(context).getColor;
 
+    final newsProvider = Provider.of<NewsProvider>(context);
+    final publishedAt = ModalRoute.of(context)!.settings.arguments as String;
+    final currentNews = newsProvider.findByDate(publishedAt: publishedAt);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: color),
@@ -27,7 +35,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
         title: Text(
-          "By Author",
+          "By ${currentNews.authorName}",
           textAlign: TextAlign.center,
           style: TextStyle(color: color),
         ),
@@ -49,22 +57,16 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Title" * 10,
+                  currentNews.title,
                   textAlign: TextAlign.justify,
                   style: titleTextStyle,
                 ),
                 const VerticalSpacing(25),
                 Row(
                   children: [
-                    Text(
-                      "20/20/2015",
-                      style: smallTextStyle,
-                    ),
+                    Text(currentNews.dateToShow, style: smallTextStyle),
                     const Spacer(),
-                    Text(
-                      "readingTimeText",
-                      style: smallTextStyle,
-                    ),
+                    Text(currentNews.readingTimeText, style: smallTextStyle),
                   ],
                 ),
                 const VerticalSpacing(20),
@@ -77,11 +79,13 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 25),
-                  child: FancyShimmerImage(
-                    boxFit: BoxFit.fill,
-                    errorWidget: Image.asset('assets/images/empty_image.png'),
-                    imageUrl:
-                        "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
+                  child: Hero(
+                    tag: currentNews.publishedAt,
+                    child: FancyShimmerImage(
+                      boxFit: BoxFit.fill,
+                      errorWidget: Image.asset('assets/images/empty_image.png'),
+                      imageUrl: currentNews.urlToImage,
+                    ),
                   ),
                 ),
               ),
@@ -93,7 +97,19 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                   child: Row(
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          try {
+                            await Share.share(
+                              currentNews.url,
+                              subject: 'Look what I made!',
+                            );
+                          } catch (err) {
+                            GlobalMethods.errorDialog(
+                              errorMessage: err.toString(),
+                              context: context,
+                            );
+                          }
+                        },
                         child: Card(
                           elevation: 10,
                           shape: const CircleBorder(),
@@ -125,7 +141,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
           const VerticalSpacing(20),
@@ -141,23 +157,19 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                 ),
                 const VerticalSpacing(10),
                 TextContent(
-                  label: "description " * 12,
+                  label: currentNews.description,
                   fontSize: 18,
                   fontWeight: FontWeight.normal,
                 ),
-                const VerticalSpacing(
-                  20,
-                ),
+                const VerticalSpacing(20),
                 const TextContent(
                   label: 'Contents',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                const VerticalSpacing(
-                  10,
-                ),
+                const VerticalSpacing(10),
                 TextContent(
-                  label: "content " * 12,
+                  label: currentNews.content,
                   fontSize: 18,
                   fontWeight: FontWeight.normal,
                 ),
