@@ -1,0 +1,51 @@
+name: app_news
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_iconly: ^1.0.2
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5
+  shared_preferences: ^2.5.3
+  google_fonts: ^6.3.0
+  fancy_shimmer_image: ^2.0.3
+  shimmer: ^3.0.0
+  card_swiper: ^3.0.1
+  page_transition: ^2.2.1
+  flutter_staggered_grid_view: ^0.7.0
+  webview_flutter: ^4.13.0
+  share_plus: ^11.0.0
+  url_launcher: ^6.3.2
+  http: ^1.5.0
+  reading_time: ^2.0.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/noticias.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/newspaper.png
+    - assets/images/empty_image.png
+    - assets/images/bookmark.png
+    - assets/images/search.png
+    - assets/images/no_news.png
+    - assets/images/noticias.png
