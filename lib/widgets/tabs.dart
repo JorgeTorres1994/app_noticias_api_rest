@@ -4,11 +4,20 @@ import 'package:flutter/src/widgets/framework.dart';
 
 class TabsWidget extends StatelessWidget {
   const TabsWidget(
+<<<<<<< HEAD
       {super.key,
       required this.text,
       required this.color,
       required this.function,
       required this.fontSize});
+=======
+      {Key? key,
+      required this.text,
+      required this.color,
+      required this.function,
+      required this.fontSize})
+      : super(key: key);
+>>>>>>> 25d9054a6d8d3e89e9e21b5ac24bf39d720a8405
   final String text;
   final Color color;
   final Function function;
